@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from "react";
 import Editor from "wrap-md-editor";
 import langSetting from "../lang";
+import Constants from "../constants";
 const MdEditor = (props) => {
   const [markdown, setMarkdown] = useState(props.content);
 
@@ -20,7 +21,7 @@ const MdEditor = (props) => {
 
     formData.append("ref", ref);
     formData.append("source", markdown);
-    const prefix = "https://www.lilplaytime.com/notesee-api";
+    const prefix = Constants.REST_ENDPOINT;
     try {
       const response = await fetch(prefix + "/?a=edit", {
         method: "POST", // *GET, POST, PUT, DELETE, etc.

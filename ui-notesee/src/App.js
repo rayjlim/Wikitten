@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import MdEditor from "./components/MdEditor";
-
+import Constants from "./constants";
 function App() {
   const [markdown, setMarkdown] = useState(``);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ function App() {
   const load = async function () {
     let pathname = window.location.pathname;
     console.log(pathname);
-    const prefix = "https://www.lilplaytime.com/notesee-api";
+    const prefix = Constants.REST_ENDPOINT;
     if(pathname === '/')
     {
       pathname = '/inbox.md';
