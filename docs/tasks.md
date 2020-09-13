@@ -11,3 +11,4 @@
 - task: redirect on file save; to reload view
 - idea: can use checklist; mark completed with keyboard/button press
 - idea: validate/fix a document's errors; see readme.md for errors
+- idea: review md wiki for feats

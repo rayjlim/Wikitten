@@ -9,3 +9,15 @@
 ## Architecture Design
 
 - [[backend considerations]]
+
+- Api requirements- list folders, read file structure
+- Crud file,
+- Text search
+- If extension is not md then don’t parse
+
+## Vscode for notes use cases
+
+- Search a note
+- Open notes quickly
+- Add new note with link in index
+- Opening index quickly

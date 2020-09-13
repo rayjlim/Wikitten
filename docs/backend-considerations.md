@@ -1,5 +1,7 @@
 # Backend Considerations
 
+Serverless style with react front end;
+
 ## Wikitten
 
 - C: Wikitten doesn’t have content search
@@ -9,3 +11,4 @@
 - No create option
 - No versioning
 - no back links
+- Map graph
