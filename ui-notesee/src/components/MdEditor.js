@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from "react";
 import Editor from "wrap-md-editor";
 import langSetting from "../lang";
-import Constants from "./constants";
+import Constants from "../constants";
 const MdEditor = (props) => {
   const [markdown, setMarkdown] = useState(props.content);
 
