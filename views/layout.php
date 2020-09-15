@@ -16,9 +16,10 @@ $output = new stdClass();
 $output->page = $page;
 $output->source = $source;
 
-
+$tree = include('tree.php');
+$output->tree = $tree;
 echo json_encode($output);
 
-// include('tree.php')
+
 ?>
  
