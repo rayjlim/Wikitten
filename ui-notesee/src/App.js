@@ -10,7 +10,6 @@ function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
-  const [appToken, setAppToken] = useState('');
 
   useEffect(() => {
     async function start() {
@@ -52,7 +51,6 @@ function App() {
         console.log(results);
         // TODO: set the cookie with the token
 
-        setAppToken(results.token);
         window.localStorage.setItem('appToken', results.token);
         setLoggedIn(true);
         return results.token;
@@ -77,7 +75,6 @@ function App() {
   const doLogout = async function () {
     window.localStorage.setItem('appToken', null);
     setLoggedIn(false);
-    setAppToken('');
   };
 
   const load = async function (token) {
