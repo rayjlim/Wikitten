@@ -1,22 +1,22 @@
-import React, { useState, useEffect, Fragment } from "react";
-import "./App.css";
-import MdEditor from "./components/MdEditor";
-import Constants from "./constants";
+import React, { useState, useEffect, Fragment } from 'react';
+import './App.css';
+import MdEditor from './components/MdEditor';
+import Constants from './constants';
 function App() {
   const [markdown, setMarkdown] = useState(``);
   const [loading, setLoading] = useState(true);
-  const [path, setPath] = useState("");
+  const [path, setPath] = useState('');
 
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
-  const [appToken, setAppToken] = useState("");
+  const [user, setUser] = useState('');
+  const [password, setPassword] = useState('');
+  const [appToken, setAppToken] = useState('');
 
   useEffect(() => {
     async function start() {
       // first check cookie and get token
-      const token = window.localStorage.getItem('appToken'); 
-      if (token && token !== "") {
+      const token = window.localStorage.getItem('appToken');
+      if (token && token !== '') {
         console.log('logged in', token);
         setLoggedIn(true);
         await load(token);
@@ -26,23 +26,23 @@ function App() {
   }, []);
 
   const checkLogin = async function (
-    formUser = "",
-    formPass = "",
+    formUser = '',
+    formPass = '',
     login = false
   ) {
     const prefix = Constants.REST_ENDPOINT;
     const formData = new URLSearchParams();
 
-    formData.append("username", formUser);
-    formData.append("password", formPass);
+    formData.append('username', formUser);
+    formData.append('password', formPass);
     if (login) {
-      formData.append("login", login);
+      formData.append('login', login);
     }
     try {
-      const response = await fetch(prefix + "/inbox.md", {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache",
+      const response = await fetch(prefix + '/inbox.md', {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
         body: formData,
       });
 
@@ -57,10 +57,10 @@ function App() {
         setLoggedIn(true);
         return results.token;
       } else {
-        console.log("Network response was not ok.");
+        console.log('Network response was not ok.');
       }
     } catch (error) {
-      console.log("Error when parsing means not logged in, " + error);
+      console.log('Error when parsing means not logged in, ' + error);
     }
   };
 
@@ -68,30 +68,38 @@ function App() {
     console.log(user);
     console.log(password);
     const token = await checkLogin(user, password, true);
+    setUser('');
+    setPassword('');
     console.log(token);
     await load(token);
+  };
+
+  const doLogout = async function () {
+    window.localStorage.setItem('appToken', null);
+    setLoggedIn(false);
+    setAppToken('');
   };
 
   const load = async function (token) {
     let pathname = window.location.pathname;
     console.log(pathname);
     const prefix = Constants.REST_ENDPOINT;
-    if (pathname === "/") {
-      pathname = "/index.md";
+    if (pathname === '/') {
+      pathname = '/index.md';
     }
     // const url = `${Constants.REST_ENDPOINT}record/`;
     try {
       const response = await fetch(prefix + pathname, {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "same-origin", // include, *same-origin, omit
+        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
         headers: {
-          "Content-Type": "application/json",
-          "x-app-token": token,
+          'Content-Type': 'application/json',
+          'x-app-token': token,
         },
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       });
 
       if (response.ok) {
@@ -103,10 +111,10 @@ function App() {
 
         setLoading(false);
       } else {
-        console.log("Network response was not ok.");
+        console.log('Network response was not ok.');
       }
     } catch (error) {
-      console.error("Error: " + error);
+      console.error('Error: ' + error);
     }
   };
 
@@ -114,6 +122,7 @@ function App() {
     <div className="App">
       {isLoggedIn ? (
         <Fragment>
+          <button onClick={e => doLogout()}>Logout</button>
           <div>Show File Tree</div>
           {loading ? (
             <span>Loading</span>
@@ -127,15 +136,15 @@ function App() {
           <input
             type="text"
             value={user}
-            onChange={(e) => setUser(e.target.value)}
+            onChange={e => setUser(e.target.value)}
           />
           <span>Password</span>
           <input
             type="text"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
           />
-          <button onClick={(e) => doLogin()}>Login</button>
+          <button onClick={e => doLogin()}>Login</button>
         </Fragment>
       )}
     </div>
