@@ -1,11 +1,14 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import './App.css';
 import MdEditor from './components/MdEditor';
+import Tree from './components/Tree';
 import Constants from './constants';
 function App() {
   const [markdown, setMarkdown] = useState(``);
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState('');
+
+  const [tree, setTree] = useState({});
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState('');
@@ -103,6 +106,10 @@ function App() {
         const results = await response.json();
 
         console.log(results);
+        const resultTree = JSON.parse(results.tree);
+        console.log(resultTree);
+        setTree(resultTree);
+
         setMarkdown(results.source);
         setPath(pathname.substring(1));
 
@@ -120,11 +127,16 @@ function App() {
       {isLoggedIn ? (
         <Fragment>
           <button onClick={e => doLogout()}>Logout</button>
-          <div>Show File Tree</div>
+
           {loading ? (
             <span>Loading</span>
           ) : (
+            <Fragment>
             <MdEditor content={markdown} path={path} />
+            <div style={{ "text-align": "left"}}>
+              <Tree items={tree} />
+          </div>  
+            </Fragment>
           )}
         </Fragment>
       ) : (

@@ -1,8 +1,8 @@
 
 # Tasks
 
-- [ ] task: remove refs to other js [[other-lib-ref]]
 - [ ] feat: tree view
+- [ ] bug: not handling backend error on save (file permissions)
 - [ ] need create/delete feature
 - [ ] try copy paste of block with wiki links
 - [ ] Need full text search
@@ -18,3 +18,4 @@
 
 - [x] idea: impl login
 - [x] idea: impl security token from ui to api; backend check for token; store token in localstorage
+- [x] task: remove refs to other js
