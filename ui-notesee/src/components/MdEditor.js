@@ -11,28 +11,21 @@ const MdEditor = (props) => {
     const ref = btoa(props.path);
 
     console.log(ref);
-    //make fetch call
-    // const formData = {
-    //     ref,
-    //     source: markdown
-    // }
-
     const formData = new URLSearchParams();
-
     formData.append("ref", ref);
     formData.append("source", markdown);
     const prefix = Constants.REST_ENDPOINT;
+    const token = window.localStorage.getItem("appToken");
+
     try {
-      const response = await fetch(prefix + "/?a=edit", {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        //   credentials: "same-origin", // include, *same-origin, omit
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   redirect: "follow", // manual, *follow, error
-        //   referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      const response = await fetch(prefix + "/index.php?a=edit", {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "x-app-token": token,
+        },
         body: formData,
       });
 
@@ -51,6 +44,7 @@ const MdEditor = (props) => {
   console.log(props.content);
   return (
     <Fragment>
+      <button onClick={(e) => save()}>Save</button>
       <Editor
         config={{
           // testEditor.getMarkdown().replace(/`/g, '\\`')

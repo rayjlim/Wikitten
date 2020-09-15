@@ -34,7 +34,7 @@ if [ -z $BUILD ]; then
       exit 1
     fi
     
-    rsync -ravz build/* ../$PREP_DIR-ui/
+    rsync -ravz --delete build/* ../$PREP_DIR-ui/
     cd ..
   fi
 

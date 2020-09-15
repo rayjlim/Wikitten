@@ -31,11 +31,11 @@ class Login
      */
     private function isLogged()
     {
-        if ($_SESSION['ACCESS_USER'] !== ACCESS_USER || $_SESSION['ACCESS_PASSWORD'] !== ACCESS_PASSWORD) {
-            return false;
-        }
 
-        return true;
+        $headerStringValue = $_SERVER['HTTP_X_APP_TOKEN'];
+        $token = base64_encode( ACCESS_USER.ACCESS_PASSWORD );
+        // echo 'header: '.$headerStringValue.", token: ".$token;
+        return  ($headerStringValue === $token);
     }
 
     /**
@@ -51,14 +51,12 @@ class Login
         //--> to be implemented
 
         // Check credentials
+
         if ($username !== ACCESS_USER || $password !== ACCESS_PASSWORD) {
             return false;
         }
-
-        $_SESSION['ACCESS_USER'] = $username;
-        $_SESSION['ACCESS_PASSWORD'] = $password;
-
-        return true;
+        echo "{\"token\": \"".base64_encode( $username.$password )."\"}" ;
+        exit;
     }
 
     /**
@@ -67,8 +65,8 @@ class Login
      */
     private function doLogout()
     {
-        $_SESSION['ACCESS_USER'] = '';
-        $_SESSION['ACCESS_PASSWORD'] = '';
+        // $_SESSION['ACCESS_USER'] = '';
+        // $_SESSION['ACCESS_PASSWORD'] = '';
 
         return true;
     }
