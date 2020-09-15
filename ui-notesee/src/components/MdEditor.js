@@ -48,6 +48,7 @@ const MdEditor = (props) => {
       <Editor
         config={{
           // testEditor.getMarkdown().replace(/`/g, '\\`')
+          path: '/assets/',
           markdown: props.content,
           onchange: (editor) => {
             console.log("onchange2 =>", editor.getMarkdown());
