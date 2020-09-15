@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import "./App.css";
 import MdEditor from "./components/MdEditor";
 import Constants from "./constants";
@@ -7,19 +7,77 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [path, setPath] = useState("");
 
-  // Similar to componentDidMount and componentDidUpdate:
-  useEffect(() => {
-    // Update the document title using the browser API
-    load();
-  });
+  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [appToken, setAppToken] = useState("");
 
-  const load = async function () {
+  useEffect(() => {
+    async function start() {
+      // first check cookie and get token
+      const token = window.localStorage.getItem('appToken'); 
+      if (token && token !== "") {
+        console.log('logged in', token);
+        setLoggedIn(true);
+        await load(token);
+      }
+    }
+    start();
+  }, []);
+
+  const checkLogin = async function (
+    formUser = "",
+    formPass = "",
+    login = false
+  ) {
+    const prefix = Constants.REST_ENDPOINT;
+    const formData = new URLSearchParams();
+
+    formData.append("username", formUser);
+    formData.append("password", formPass);
+    if (login) {
+      formData.append("login", login);
+    }
+    try {
+      const response = await fetch(prefix + "/inbox.md", {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const results = await response.json();
+
+        console.log(results);
+        // TODO: set the cookie with the token
+
+        setAppToken(results.token);
+        window.localStorage.setItem('appToken', results.token);
+        setLoggedIn(true);
+        return results.token;
+      } else {
+        console.log("Network response was not ok.");
+      }
+    } catch (error) {
+      console.log("Error when parsing means not logged in, " + error);
+    }
+  };
+
+  const doLogin = async function () {
+    console.log(user);
+    console.log(password);
+    const token = await checkLogin(user, password, true);
+    console.log(token);
+    await load(token);
+  };
+
+  const load = async function (token) {
     let pathname = window.location.pathname;
     console.log(pathname);
     const prefix = Constants.REST_ENDPOINT;
-    if(pathname === '/')
-    {
-      pathname = '/inbox.md';
+    if (pathname === "/") {
+      pathname = "/index.md";
     }
     // const url = `${Constants.REST_ENDPOINT}record/`;
     try {
@@ -30,6 +88,7 @@ function App() {
         credentials: "same-origin", // include, *same-origin, omit
         headers: {
           "Content-Type": "application/json",
+          "x-app-token": token,
         },
         redirect: "follow", // manual, *follow, error
         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -47,18 +106,37 @@ function App() {
         console.log("Network response was not ok.");
       }
     } catch (error) {
-      alert("Error: " + error);
+      console.error("Error: " + error);
     }
   };
 
   return (
     <div className="App">
-      <button onClick={(e) => load()}>href</button>
-      <div>Show File Tree</div>
-      {loading ? (
-        <span>Loading</span>
+      {isLoggedIn ? (
+        <Fragment>
+          <div>Show File Tree</div>
+          {loading ? (
+            <span>Loading</span>
+          ) : (
+            <MdEditor content={markdown} path={path} />
+          )}
+        </Fragment>
       ) : (
-        <MdEditor content={markdown} path={path} />
+        <Fragment>
+          <span>User</span>
+          <input
+            type="text"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+          />
+          <span>Password</span>
+          <input
+            type="text"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button onClick={(e) => doLogin()}>Login</button>
+        </Fragment>
       )}
     </div>
   );
