@@ -393,6 +393,21 @@ class Wiki
         exit;
     }
 
+    protected function _ErrorCode($code, $message = 'Page not found.')
+    {
+        header('HTTP/1.0 '.$code.' '.$message, true);
+        $page_data = $this->_default_page_data;
+        $page_data['title'] = $message;
+
+        // $this->_view('uhoh', array(
+        //     'error' => $message,
+        //     'parts' => array('Uh-oh'),
+        //     'page' => $page_data
+        // ));
+        var_dump($page_data);
+        exit;
+    }
+
     public function indexAction()
     {
         $request = parse_url($_SERVER['REQUEST_URI']);
@@ -424,21 +439,26 @@ class Wiki
      */
     public function editAction()
     {
+        // echo "editAction";
         // Bail out early if editing isn't even enabled, or
         // we don't get the right request method && params
         // NOTE: $_POST['source'] may be empty if the user just deletes
         // everything, but it should always be set.
-        if (!ENABLE_EDITING || $_SERVER['REQUEST_METHOD'] != 'POST'
+        // echo ENABLE_EDITING.($_SERVER['REQUEST_METHOD'] != 'POST').empty($_POST['ref']).(!isset($_POST['source']));
+        if (!ENABLE_EDITING ){
+            return $this->_ErrorCode(403, 'Editing Not Enabled');
+        }
+        if ($_SERVER['REQUEST_METHOD'] != 'POST'
             || empty($_POST['ref']) || !isset($_POST['source'])
         ) {
             $this->_404();
         }
-
+        // echo "saving";
         $ref = $_POST['ref'];
         $source = $_POST['source'];
         $file = base64_decode($ref);
         $path = realpath(LIBRARY . DIRECTORY_SEPARATOR . $file);
-        echo $ref.":".$source.":".$path;
+        // echo $ref.":".$source.":".$path;
         // Check if the file is safe to work with, otherwise just
         // give back a generic 404 aswell, so we don't allow blind
         // scanning of files:
@@ -450,9 +470,14 @@ class Wiki
 
         // Check if empty
         if(trim($source)){
-            echo "put the contents";
             // Save the changes, and redirect back to the same page
-            file_put_contents($path, $source);
+            try {
+                file_put_contents($path, $source);
+            }catch(Exception $err){
+                echo 'error when saving'.$err;
+            }
+
+            echo '{"status":"success"}';
         }else{
             // Delete file and redirect too (but it will return 404)
             unlink($path);

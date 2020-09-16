@@ -16,7 +16,7 @@ function App() {
 
   useEffect(() => {
     async function start() {
-      // first check cookie and get token
+      // first check for token
       const token = window.localStorage.getItem('appToken');
       if (token && token !== '') {
         console.log('logged in', token);
@@ -126,7 +126,7 @@ function App() {
     <div className="App">
       {isLoggedIn ? (
         <Fragment>
-          <button onClick={e => doLogout()}>Logout</button>
+          
 
           {loading ? (
             <span>Loading</span>
@@ -138,6 +138,7 @@ function App() {
           </div>  
             </Fragment>
           )}
+          <button onClick={e => doLogout()}>Logout</button>
         </Fragment>
       ) : (
         <Fragment>

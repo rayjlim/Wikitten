@@ -1,9 +1,12 @@
-import React, { useState, Fragment } from "react";
-import Editor from "wrap-md-editor";
-import langSetting from "../lang";
-import Constants from "../constants";
-const MdEditor = (props) => {
+import React, { useState, Fragment } from 'react';
+import Editor from 'wrap-md-editor';
+import langSetting from '../lang';
+import Constants from '../constants';
+import Prompt from './Prompt';
+
+const MdEditor = props => {
   const [markdown, setMarkdown] = useState(props.content);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const save = async function () {
     console.log(markdown);
@@ -12,46 +15,53 @@ const MdEditor = (props) => {
 
     console.log(ref);
     const formData = new URLSearchParams();
-    formData.append("ref", ref);
-    formData.append("source", markdown);
+    formData.append('ref', ref);
+    formData.append('source', markdown);
     const prefix = Constants.REST_ENDPOINT;
-    const token = window.localStorage.getItem("appToken");
+    const token = window.localStorage.getItem('appToken');
 
     try {
-      const response = await fetch(prefix + "/index.php?a=edit", {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache",
+      const response = await fetch(prefix + '/index.php?a=edit', {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "x-app-token": token,
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'x-app-token': token,
         },
         body: formData,
       });
 
       if (response.ok) {
-        //   const results = await response.json();
-        alert("saved");
-        console.log(response);
+        const results = await response.json();
+        alert('saved');
+        console.log(results);
+        if (results.status == 'success') {
+          setHasChanges(false);
+        } else {
+          alert('Server Error on Save');
+        }
       } else {
-        console.log("Network response was not ok.");
+        console.log('Network response was not ok.');
       }
     } catch (error) {
-      alert("Error: " + error);
+      alert('Error: ' + error);
     }
   };
 
   console.log(props.content);
   return (
     <Fragment>
-      <button onClick={(e) => save()}>Save</button>
+      <Prompt dataUnsaved={hasChanges} />
+      <button onClick={e => save()}>Save</button>
+      <span>{hasChanges ? 'has changes' : 'unchanged'}</span>
       <Editor
         config={{
           // testEditor.getMarkdown().replace(/`/g, '\\`')
           path: '/assets/',
           markdown: props.content,
-          onchange: (editor) => {
-            console.log("onchange2 =>", editor.getMarkdown());
+          onchange: editor => {
+            console.log('onchange2 =>', editor.getMarkdown());
 
             const modified = editor.getMarkdown();
 
@@ -62,14 +72,14 @@ const MdEditor = (props) => {
             console.log(match);
             const found = modified.match(regex);
             if (found) {
-              console.log(match["1"]);
+              console.log(match['1']);
 
-              const title = match["1"].replace(/-/g, " ");
-              const filename = match["1"].replace(/ /g, "-");
+              const title = match['1'].replace(/-/g, ' ');
+              const filename = match['1'].replace(/ /g, '-');
 
-              console.log(match.index + " " + regex.lastIndex);
+              console.log(match.index + ' ' + regex.lastIndex);
 
-              const matchLen = match["1"].length;
+              const matchLen = match['1'].length;
               const replaced = modified.replace(
                 regex,
                 `[${title}](${filename}.md)`
@@ -86,11 +96,12 @@ const MdEditor = (props) => {
             }
 
             setMarkdown(editor.getMarkdown());
+            setHasChanges(true);
           },
           lang: langSetting,
         }}
       />
-      <button onClick={(e) => save()}>Save</button>
+      <button onClick={e => save()}>Save</button>
     </Fragment>
   );
 };
