@@ -1,11 +1,10 @@
----
-"tags": ["wiki", "wikitten", "personal wiki"],
-"author": "Victor Stanciu",
-"maintainer": "Eduardo Fernandes"
----
-
 # Hello there! Welcome to your personal wiki!
 
+:fa-heart::tw-1f171:
+
+[second](second.md)
+[third](third.md)
+test
 `Wikitten` is a small, fast, PHP wiki that [I][1] made because I really needed a place to store my notes, snippets, ideas, and so on. I've tried a lot of personal wikis and note-taking applications in the past, but since I have peculiar needs, none of them really suited me, so I rolled my own.
 
 [1]: https://github.com/devaneando/wikitten

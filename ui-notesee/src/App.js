@@ -3,20 +3,27 @@ import './App.css';
 import MdEditor from './components/MdEditor';
 import Tree from './components/Tree';
 import Constants from './constants';
+import marked from 'marked';
 function App() {
   const [markdown, setMarkdown] = useState(``);
-  const [loading, setLoading] = useState(true);
   const [path, setPath] = useState('');
-
+  const [loading, setLoading] = useState(true);
   const [tree, setTree] = useState({});
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
+  const [mode, setMode] = useState('read');
 
   useEffect(() => {
     async function start() {
       // first check for token
+      const _mode = window.localStorage.getItem('mode');
+      if (_mode) {
+        console.log('_mode', _mode);
+        setMode(_mode);
+      }
+
       const token = window.localStorage.getItem('appToken');
       if (token && token !== '') {
         console.log('logged in', token);
@@ -75,9 +82,20 @@ function App() {
     await load(token);
   };
 
-  const doLogout = async function () {
+  const doLogout = function () {
     window.localStorage.setItem('appToken', null);
     setLoggedIn(false);
+  };
+
+  const switchMode = function () {
+    const newMode = mode === 'edit' ? 'read' : 'edit';
+    console.log('switchMode', newMode);
+    window.localStorage.setItem('mode', newMode);
+    setMode(newMode);
+  };
+
+  const updateMarkdown = function (content) {
+    setMarkdown(content);
   };
 
   const load = async function (token) {
@@ -122,20 +140,53 @@ function App() {
     }
   };
 
+  marked.setOptions({
+    renderer: new marked.Renderer(),
+    gfm: true,
+    tables: true,
+    breaks: true,
+    pedantic: false,
+    smartLists: true,
+    smartypants: false,
+  });
+
+  let output = '';
+  try {
+    output = marked(markdown);
+  } catch (err) {
+    console.log(err);
+  }
+
+  console.log(mode);
+  
+
   return (
     <div className="App">
       {isLoggedIn ? (
         <Fragment>
-          
-
           {loading ? (
             <span>Loading</span>
           ) : (
             <Fragment>
-            <MdEditor content={markdown} path={path} />
-            <div style={{ "text-align": "left"}}>
-              <Tree items={tree} />
-          </div>  
+              <button onClick={e => switchMode()}>Switch Mode</button>
+              { mode === 'edit' ? (
+               <Fragment>
+                Editor Mode
+               <MdEditor content={markdown} path={path} onSave={updateMarkdown} />
+             </Fragment>
+           ):  (
+             <Fragment>
+               Read Mode
+               <div
+                 style={{ textAlign: 'left', padding: '.5em' }}
+                 dangerouslySetInnerHTML={{ __html: output }}
+               />
+             </Fragment>
+           )
+              }
+              <div style={{ textAlign: 'left' }}>
+                <Tree items={tree} />
+              </div>
             </Fragment>
           )}
           <button onClick={e => doLogout()}>Logout</button>

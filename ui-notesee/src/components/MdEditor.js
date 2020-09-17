@@ -36,7 +36,7 @@ const MdEditor = props => {
         const results = await response.json();
         alert('saved');
         console.log(results);
-        if (results.status == 'success') {
+        if (results.status === 'success') {
           setHasChanges(false);
         } else {
           alert('Server Error on Save');
@@ -49,7 +49,7 @@ const MdEditor = props => {
     }
   };
 
-  console.log(props.content);
+  // console.log(props.content);
   return (
     <Fragment>
       <Prompt dataUnsaved={hasChanges} />
@@ -61,7 +61,8 @@ const MdEditor = props => {
           path: '/assets/',
           markdown: props.content,
           onchange: editor => {
-            console.log('onchange2 =>', editor.getMarkdown());
+            console.log('onchange2 =>');
+            // console.log( editor.getMarkdown());
 
             const modified = editor.getMarkdown();
 
@@ -97,6 +98,7 @@ const MdEditor = props => {
 
             setMarkdown(editor.getMarkdown());
             setHasChanges(true);
+            props.onSave(editor.getMarkdown())
           },
           lang: langSetting,
         }}

@@ -1,5 +1,5 @@
-import React, { useState, Fragment } from 'react';
-import { __esModule } from 'wrap-md-editor';
+import React from 'react';
+
 class Prompt extends React.Component {
   componentDidMount() {
     window.addEventListener('beforeunload', this.beforeunload.bind(this));
