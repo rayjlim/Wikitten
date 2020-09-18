@@ -16,7 +16,13 @@
 
 - [ ] idea: look for orphan (non-linked) docs
 - [ ] idea: expire Auth token by time since lasts login
-
+- [ ] idea: move a file to new folder
+- [ ] wiki links parser to handle folders
+- [ ] auto save (especially on navigate away)
+- [ ] history of changes view
+- [ ] mark as favorite (use tags in heading)
+- [ ] view display order, ie. by creation date
+- [ ] Quick button to create new note by date
 ----
 
 - [x] idea: impl login
