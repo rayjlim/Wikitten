@@ -4,7 +4,7 @@
 
 [second](second.md)
 [third](third.md)
-test
+[forth](forth.md)
 `Wikitten` is a small, fast, PHP wiki that [I][1] made because I really needed a place to store my notes, snippets, ideas, and so on. I've tried a lot of personal wikis and note-taking applications in the past, but since I have peculiar needs, none of them really suited me, so I rolled my own.
 
 [1]: https://github.com/devaneando/wikitten

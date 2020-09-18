@@ -126,7 +126,8 @@ class Wiki
                         . "<input type='submit' class='btn btn-primary' value='Create this page' />"
                         . "</form>"
                     ,
-                    'is_dir'    => false
+                    'is_dir'    => false,
+                    'source' => ''
                 ));
             }
         } else {
@@ -477,15 +478,11 @@ class Wiki
                 echo 'error when saving'.$err;
             }
 
-            echo '{"status":"success"}';
+            echo '{"action":"edit", "status":"success"}';
         }else{
             // Delete file and redirect too (but it will return 404)
             unlink($path);
         }
-
-        // $redirect_url = BASE_URL . "/$file";
-        // header("HTTP/1.0 302 Found", true);
-        // header("Location: $redirect_url");
 
         exit();
     }
@@ -555,26 +552,28 @@ class Wiki
 
     public function createAction()
     {
+ 
         $request    = parse_url($_SERVER['REQUEST_URI']);
         $page       = str_replace("###" . APP_DIR . "/", "", "###" . urldecode($request['path']));
-
-        $filepath   = LIBRARY . urldecode($request['path']);
+        // echo urldecode($request['path']). '--'.APP_DIR;
+        $filepath   = LIBRARY ."/".$page;
         $content    = "# " . htmlspecialchars($page, ENT_QUOTES, 'UTF-8');
+
         // if feature not enabled, go to 404
         if (!ENABLE_EDITING || file_exists($filepath)) {
             $this->_404();
         }
-
         // Create subdirectory recursively, if neccessary
-        mkdir(dirname($filepath), 0755, true);
+        if (!file_exists(dirname($filepath))) {
+            mkdir(dirname($filepath), 0755, true);
+        }
 
         // Save default content, and redirect back to the new page
+
         file_put_contents($filepath, $content);
+
         if (file_exists($filepath)) {
-            // Redirect to new page
-            $redirect_url = BASE_URL . "/$page";
-            header("HTTP/1.0 302 Found", true);
-            header("Location: $redirect_url");
+            echo '{"status":"success", "path":"'.$filepath.'"}';
 
             exit();
         } else {
