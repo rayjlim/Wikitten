@@ -14,6 +14,7 @@ function e($dirty)
 // var_dump($html);
 $output = new stdClass();
 $output->page = $page;
+$output->parts = $parts;
 $output->source = $source;
 
 $tree = include('tree.php');
